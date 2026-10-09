@@ -459,12 +459,12 @@ Si reinstalas: restaura **solo datos** (volcados de bases de datos, volúmenes),
 2. **Fiarse de `ps`/`top`/`ls`.** Con `libgcwrap` cargado no mostraban el minero ni los archivos.
 3. **`rm` sin `chattr -i`.** Daba "Operation not permitted" en `ld.so.preload` y las librerías.
 4. **Olvidar `ldconfig`.** `ld.so.cache` seguía listando las librerías del malware.
-5. **No verificar de nuevo tras matar al implante.** Entre mi primera "limpieza" y la muerte del implante pasaron más de 20 minutos, y el implante recreó `ld.so.preload`, `/etc/profile`, `/root/.bash_profile`, `/etc/cron.d/perfclean`, `.local`, `vei`, `exi`, `nologin ` y llaves en `lp`. Una revisión posterior encontró los restos. **Verifica siempre después de que el implante esté muerto.**
+5. **No verificar de nuevo tras matar al implante.** Entre una primera "limpieza" y la muerte del implante pasaron más de 20 minutos, y el implante recreó `ld.so.preload`, `/etc/profile`, `/root/.bash_profile`, `/etc/cron.d/perfclean`, `.local`, `vei`, `exi`, `nologin ` y llaves en `lp`. Una revisión posterior encontró los restos. **Verifica siempre después de que el implante esté muerto.**
 6. **`ausearch` sin `--input-logs`** se cuelga esperando stdin y acumula procesos.
 7. **Un muestreador `ps | grep crontab` se detecta a sí mismo**: guarda el script en un archivo y usa `pgrep -x`.
 8. **Buscar solo por nombre.** El implante se llamaba `s6-supervise` y `dockerd`. Comparar `exe` (`readlink /proc/PID/exe`) con el nombre declarado delató el disfraz.
 9. **Confiar en un indicador de CPU acumulado** (calculado desde el arranque) para decidir si el minero seguía activo.
-10. **Bloquear tu propia IP.** Si restringes SSH por IP y tu IP es dinámica, te quedas fuera. Ten una vía alternativa (VPN/ZeroTier) o una consola del proveedor.
+10. **Bloquear tu propia IP.** Si restringes SSH por IP y tu IP es dinámica, te quedas fuera. Ten una vía alternativa (una VPN) o una consola del proveedor.
 
 ---
 
