@@ -9,6 +9,8 @@ All victim-identifying information has been removed.
 | File | Description |
 |---|---|
 | [`perfctl-variante-folddbus-informe.md`](perfctl-variante-folddbus-informe.md) | Case write-up (Spanish): symptoms, new behaviors, detection that worked, cleanup order, open questions and recommendations. |
+| [`GUIA-ERRADICACION.md`](GUIA-ERRADICACION.md) | Step-by-step eradication guide (Spanish): trusted view, killing the resident implant, removing the rootkit, restoring config, verification, post-incident actions, when to reinstall, and common mistakes. |
+| [`verify-perfctl.sh`](verify-perfctl.sh) | Read-only verification script for all known indicators (exit code 1 if any is found). |
 | [`perfctl-variante-folddbus-ioc.csv`](perfctl-variante-folddbus-ioc.csv) | Indicators of compromise: SHA-256 hashes, paths, process names, environment variables, attacker SSH key fingerprint, persistence lines and symptoms. |
 
 ## Quick detection tips
@@ -17,6 +19,7 @@ All victim-identifying information has been removed.
 - Compare PIDs visible in `/proc` against every `cgroup.procs` under `/sys/fs/cgroup/systemd`; hidden processes show up only in the latter.
 - The rootkit hooks glibc: a musl-based container (for example Alpine) with the host disk mounted and `--pid=host` sees the real state.
 - Stop `crond.service` (kills its whole cgroup, including the hidden implant) *before* deleting files, or everything is recreated within seconds.
+- Credentials typed on the host during the compromise (PAM hook and terminal capture) should be treated as exposed: rotate them.
 - Check `/etc/passwd` for shells with a trailing space and `authorized_keys` on system accounts such as `ftp` and `lp`.
 
 ## Notes

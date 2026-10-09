@@ -53,3 +53,15 @@ base64_prefijo,"IyEvYmluL3NoCkRLU0tGPSJ1bml4Oi8vL2Jpbi93YmluL3J1bi9kb2NrZXIuc29j
 sintoma,vm.nr_hugepages>0 sin configuracion,Hugepages reservadas en caliente por el minero
 sintoma,carga alta con CPU libre en top,Falso top y rootkit ocultando procesos
 sintoma,ldd /usr/bin/ls lista /lib/libgcwrap.so,Deteccion del hook aunque ld.so.preload este oculto
+ruta,/tmp/.xdiag/,Directorio de trabajo principal (~41 MB): elog; mpi; cp; data/pam/sshd.log; data/tty/-bash.*.txt; tordata/; int/.per.s; hs.txt; apxj (setuid vacio)
+ruta,/tmp/.xdiag/data/pam/sshd.log,Credenciales capturadas por el hook PAM (SENSIBLE; no publicar)
+ruta,/tmp/.xdiag/data/tty/,Capturas de sesiones bash (SENSIBLE; no publicar)
+ruta,/tmp/.xdiag/tordata/,Datos del cliente Tor y del servicio oculto
+ruta,/etc/cron.d/perfclean,Cron: "9 * * * * root perfcc"
+ruta,/dev/shm/.dmesg/pds/<PID> y /dev/shm/.dmesg/ino/,Registro de PIDs de procesos del malware
+ruta,/dev/shm/.config/traffmonetizer/cli_device_ids.json,Proxyjacking (Traffmonetizer)
+ruta,/tmp/daisp /tmp/rsr /tmp/go/imports,Marcadores vacios
+proceso,traffmonetizer,Software de proxyjacking (monetiza ancho de banda)
+red,"cliente Tor y servicio oculto en el servidor",Canal de acceso/comunicacion (identificador del servicio no publicado)
+sintoma,cron.d con linea que ejecuta perfcc cada hora,Persistencia adicional
+sintoma,sshd.log de PAM modificado en la hora de un login,Captura de credenciales de autenticacion

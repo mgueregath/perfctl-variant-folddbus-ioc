@@ -45,6 +45,15 @@ Se limpió sin reinstalar. No se determinó la vía de entrada.
 6. **Persistencia en login:** `/root/.bash_profile` con `test -x /bin/perfcc && FPROF=p /bin/perfcc`, y `/etc/profile` con `export PATH=/bin/.local/bin:$PATH`.
 7. **Atributos inmutables:** `ld.so.preload`, `libgcwrap.so`, `libfsnldev.so` y `libpprocps.so` con `chattr +i`, y archivos dentro de `.atmp`.
 
+8. **Captura de credenciales y sesiones.** El directorio de trabajo del malware (`/tmp/.xdiag`, ~41 MB) contenía `data/pam/sshd.log` (hook de `pam_authenticate`, coherente con lo descrito para `libgcwrap.so`) y `data/tty/-bash.*.txt` (24 capturas de sesiones bash entre el primer y el último día del compromiso). El archivo de PAM se modificó por última vez durante un login por contraseña hecho el día de la limpieza. **Debe asumirse que las contraseñas usadas en el servidor y lo escrito en sus terminales durante el periodo quedaron expuestas.**
+9. **Servicio oculto de Tor y cliente Tor** (`tordata/`, `torrc-*`, archivo `hs.txt` con el identificador del servicio oculto y socket `int/.per.s`), utilizable como canal de acceso y de comunicación. No se observó tráfico a los destinos Tor listados en reportes públicos durante la ventana de observación, pero no se capturó tráfico de red completo.
+10. **Proxyjacking:** `/dev/shm/.config/traffmonetizer/cli_device_ids.json`. Coincide con el uso de aplicaciones de monetización de ancho de banda descrito en los reportes.
+11. **Seguimiento de PIDs en `/dev/shm/.dmesg/{pds,ino}`**, con un archivo por cada proceso del malware.
+12. **Persistencia adicional por `cron.d`:** `/etc/cron.d/perfclean` (`9 * * * * root perfcc`), además de la línea del crontab de root.
+13. **Archivo setuid vacío** `apxj` (`-rwsr-sr-t`) y marcadores `/tmp/daisp`, `/tmp/rsr`, `/tmp/go/imports`.
+
+> Nota sobre el directorio de staging: el `.xdiag` de la ruta `/usr/bin/.atmp/tmp/.applocal.xdiag/` guardaba el paquete original del dropper (`trunk.<hash>_<IP>_.sx2.tar.gz`) y un binario `trufflehog` sin modificar.
+
 ## Detección que funcionó
 
 - **Contenedor Alpine con el disco del host montado y `--pid=host`.** El rootkit hookea glibc, así que un contenedor basado en musl (por ejemplo `postgres:16-alpine`) veía `ld.so.preload`, la librería y el proceso oculto. Con `--cap-add LINUX_IMMUTABLE` permitió `chattr -i` y borrarlos.
@@ -63,12 +72,14 @@ Se limpió sin reinstalar. No se determinó la vía de entrada.
 6. Regenerar `ld.so.cache` con `ldconfig`.
 7. Reglas de `auditd` sobre `ld.so.preload`, cron, `~/.ssh`, `/etc/passwd`, perfiles y `execve` desde `/tmp`, y monitoreo posterior.
 
+**Verifica después de que el implante esté muerto.** Entre una primera limpieza y la muerte del implante, este recreó `ld.so.preload`, `/etc/profile` (PATH falso), `/root/.bash_profile` (`perfcc`), `/etc/cron.d/perfclean`, `/usr/bin/.local`, `/usr/lib/vei|exi`, la shell falsa de `lp` y su llave SSH. Esos restos solo se encontraron al ejecutar un script de verificación completo horas después. Una comprobación puntual con unos pocos indicadores no los habría detectado.
+
 **Trampa a evitar:** matar los procesos visibles y borrar archivos *sin* detener el implante residente hace que todo se recree en segundos. Hasta no parar el cgroup de `crond`, el rootkit, las librerías y la línea del cron volvieron a aparecer.
 
 ## Qué no se sabe
 
 - **La vía de entrada.** Polkit estaba parcheado (CVE-2021-4034) y no había RocketMQ. Había varios servicios expuestos (base de datos y un agente de gestión de Docker con el socket y `/` del host montados) y fuerza bruta SSH constante.
-- **Si hubo exfiltración.** `trufflehog` corrió como root durante horas, pero el staging estaba vacío.
+- **Si hubo exfiltración.** `trufflehog` corrió como root durante horas, pero el staging estaba vacío. Además hubo captura local de credenciales y de sesiones de terminal; no se sabe si llegó a enviarse.
 - **La causa de los kernel crash.**
 - **Garantía de limpieza total.** La recomendación del reporte original, reinstalar, sigue siendo lo más seguro.
 
@@ -81,6 +92,11 @@ Se limpió sin reinstalar. No se determinó la vía de entrada.
 - Revisar `/etc/passwd` por shells con espacios o fuera de `/etc/shells`, y `authorized_keys` en cuentas de sistema.
 - Calcular la CPU como diferencia entre dos lecturas de `/proc/stat`, no con el acumulado.
 - Ante una infección confirmada: reconstruir desde una imagen limpia, rotar todos los secretos y revisar el equipo desde el que se administra.
+
+## Guía y herramientas
+
+- [GUIA-ERRADICACION.md](GUIA-ERRADICACION.md): procedimiento detallado, con comandos, verificación y criterios para reinstalar.
+- [verify-perfctl.sh](verify-perfctl.sh): verificación de **solo lectura** de todos los indicadores conocidos (devuelve código 1 si encuentra alguno).
 
 ## Referencias
 
