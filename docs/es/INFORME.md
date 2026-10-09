@@ -1,8 +1,9 @@
 # Variante de perfctl con `trufflehog` y cuentas de sistema como puerta trasera: análisis de un caso real
 
+**Idioma:** [English](../en/REPORT.md) · Español
 **TLP:CLEAR** · Servidor AlmaLinux 8.10 (kernel 4.18) · Compromiso de ~63 horas · Limpieza sin reinstalar
 
-> Este documento está anonimizado: no incluye nombres de organizaciones, hosts, IP de la víctima ni credenciales. Los IOC acompañan en un archivo CSV aparte.
+> Este documento está anonimizado: no incluye nombres de organizaciones, hosts, IP de la víctima ni credenciales. Los IOC están en un archivo CSV aparte: [`iocs/perfctl-folddbus-iocs.csv`](../../iocs/perfctl-folddbus-iocs.csv). Para el procedimiento, ve a la [guía de erradicación](GUIA-ERRADICACION.md).
 
 ---
 
@@ -96,7 +97,8 @@ Se limpió sin reinstalar. No se determinó la vía de entrada.
 ## Guía y herramientas
 
 - [GUIA-ERRADICACION.md](GUIA-ERRADICACION.md): procedimiento detallado, con comandos, verificación y criterios para reinstalar.
-- [verify-perfctl.sh](verify-perfctl.sh): verificación de **solo lectura** de todos los indicadores conocidos (devuelve código 1 si encuentra alguno).
+- [`verify-perfctl.sh`](../../verify-perfctl.sh): verificación de **solo lectura** de todos los indicadores conocidos (devuelve código 1 si encuentra alguno).
+- [`iocs/perfctl-folddbus-iocs.csv`](../../iocs/perfctl-folddbus-iocs.csv): indicadores de compromiso (descripciones en inglés y español).
 
 ## Referencias
 

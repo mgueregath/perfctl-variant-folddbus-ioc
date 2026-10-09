@@ -1,11 +1,13 @@
 # Guía de erradicación: perfctl (variante folddbus-send / tpm_dev_wq / libgcwrap) en Linux
 
+**Idioma:** [English](../en/ERADICATION-GUIDE.md) · Español
+
 Guía paso a paso para limpiar un servidor Linux con Docker infectado por esta variante **sin reinstalar**, basada en una limpieza real. Incluye los comandos exactos, la verificación después de cada fase y los errores que hicieron fallar intentos intermedios.
 
 > **Léela completa antes de ejecutar nada.** Algunos pasos son destructivos o cortan el acceso. Hazlos en el orden indicado.
 > **Reinstalar es lo más seguro.** Esta guía es para cuando no se puede, y no garantiza una eliminación total. Ver la sección 14 (cuándo reinstalar).
 
-Los ejemplos usan AlmaLinux/RHEL 8 (`rpm`, `systemd`, cgroups v1). Para Debian/Ubuntu ver el apéndice. Los marcadores `<IP_ADMIN>`, `<RED_ADMIN>` y `<IMAGEN_MUSL>` son valores que debes reemplazar.
+Los ejemplos usan AlmaLinux/RHEL 8 (`rpm`, `systemd`, cgroups v1). Para Debian/Ubuntu ver el apéndice. El script complementario [`verify-perfctl.sh`](../../verify-perfctl.sh) está en la raíz del repositorio. Los marcadores `<IP_ADMIN>`, `<RED_ADMIN>` y `<IMAGEN_MUSL>` son valores que debes reemplazar.
 
 ---
 
@@ -109,7 +111,7 @@ sha256sum /usr/lib/libpprocps.so /usr/lib/libfsnldev.so /lib/libgcwrap.so /usr/b
 
 ## 5. Confirmar la infección
 
-Usa el script de este repositorio (solo lectura). Ejecútalo **dos veces**: desde el host y, si es posible, desde la vista confiable.
+Usa el script [`verify-perfctl.sh`](../../verify-perfctl.sh) de este repositorio (solo lectura; su salida está en inglés). Ejecútalo **dos veces**: desde el host y, si es posible, desde la vista confiable.
 
 ```bash
 bash verify-perfctl.sh
