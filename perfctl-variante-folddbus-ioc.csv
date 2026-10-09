@@ -1,0 +1,55 @@
+tipo,valor,descripcion
+sha256,2b6fc36166d78080c4d3bd9759fe6e5b827e46963e85991b4a4f15d7198776ba,pctl / folddbus-send (ELF estatico Go 3077400 bytes; implante residente y lanzador)
+sha256,51e42cb2dd6ec6d9cf808eeda2cc6fa5cf8201e9e0e92345655368a9afae7edb,perfcc / libpprocps.so / libfsnldev.so / s6-supervise falso (11131211 bytes; minero)
+sha256,4c04f4b381bee57ce861524beb705e2db5672d006954ac1719a5df0dc3b957a9,libgcwrap.so (rootkit LD_PRELOAD; 80800 bytes)
+sha256,9e2622fe253a0483669c7d21b5b3f32f6a11fbafe032a6fd4ccc32f33cca102e,"/sbin/nologin  (con espacio al final) = copia de /usr/bin/bash usada como shell de puerta trasera"
+sha256,20de8cf7009f60af5309bf3d864e6a5f80593e26e3a3b9251927c64077e1f546,top falso (/usr/bin/.local/bin/top)
+sha256,64bdb0bcf351b3197dff4ba4f119c6518dc9b1639eb8f54ecdefc24a442ca84d,htop falso
+sha256,3d8945796a2332f20741be6663b61a690af2902cb2e51c58d5cf066894c48a0a,ldd falso
+sha256,375b11eca5ec7545863570e528303c76a213238f36d877cb740082cd744df3ac,crontab falso
+sha256,a8299fc8b115af77731413b4c09dab68940f8ff25e55867651627032745c2181,df falso (script bash que filtra "/wbin/")
+sha256,13fa3d6507bcafc659c944897c7a1736cc7dde182a57354b23aaa6c0bf3db438,mount falso (script bash que filtra "/wbin/")
+sha256,93eceb3a64ebe5a8a5f09b3b98e97b2d684bc613de5627c55f2514b9b6ca616b,/tmp/.t.trf/cli (ELF estatico-pie 2704448 bytes)
+ssh_key_fp,SHA256:kKI/tpGGK0vklmw0DCIzTYVlbklDBvCMXGQsb/nShq8,Llave RSA-4096 del atacante en authorized_keys de ftp y lp (comentarios ftp@localhost / lp@localhost)
+ip,176.53.159.198,Fuerza bruta SSH contra root
+ruta,/etc/ld.so.preload,Contenido: /lib/libgcwrap.so (17 bytes) con chattr +i
+ruta,/lib/libgcwrap.so,Rootkit (tambien /usr/lib/libgcwrap.so)
+ruta,/usr/lib/libpprocps.so,Copia del minero (chattr +i)
+ruta,/usr/lib/libfsnldev.so,Copia del minero (chattr +i)
+ruta,/usr/bin/perfcc,Minero
+ruta,/root/.config/cron/perfcc,Minero + objetivo de la linea de cron
+ruta,/usr/bin/folddbus-send,Implante/lanzador (permisos 777)
+ruta,/tmp/.perf.c/,Directorio de trabajo (pctl; s6-supervise; bash; tpm_dev_wq)
+ruta,/tmp/.t.trf/cli,Binario auxiliar
+ruta,/tmp/k8t y /tmp/k8s.run*,Marcadores
+ruta,/usr/bin/.atmp/tmp/.applocal.xdiag/,Staging: trufflehog; cloud_meta.txt; files_other; files_th; trunk.*.sx2.tar.gz; r.log; finished
+ruta,/usr/bin/.local/bin/,Falsos top; htop; df; mount; ldd; crontab (tambien /bin/.local/bin)
+ruta,/usr/bin/wbin/,Falsos docker; dockerd; containerd; docker-proxy (scripts env AAZHDE=1)
+ruta,/usr/bin/kbush y /usr/bin/kkbush,Enlaces simbolicos a bash
+ruta,/usr/lib/vei y /usr/lib/exi,Archivos de texto con identificador de la victima
+ruta,/etc/prdevid,Identificador (32 hex)
+ruta,/var/ftp/.ssh/authorized_keys y /var/spool/lpd/.ssh/authorized_keys,Llaves del atacante en cuentas de sistema
+ruta,"/sbin/nologin  (con espacio)",Shell falsa de ftp y lp
+persistencia,"11 * * * * /root/.config/cron/perfcc",Linea en el crontab de root; reescrita cada 10 s por el implante
+persistencia,"test -x /bin/perfcc && FPROF=p /bin/perfcc",Linea en /root/.bash_profile
+persistencia,"export PATH=/bin/.local/bin:$PATH",Linea en /etc/profile
+persistencia,"echo '/etc/coredumps/%e.%p.%u.%t' > /proc/sys/kernel/core_pattern",Alteracion de core_pattern
+proceso,"httpd -j",Minero disfrazado
+proceso,"tpm_dev_wq -e",Minero (ejecutable en /tmp/.perf.c/)
+proceso,"s6-supervise s6rc-fdholder",Implante residente; ejecutable real /tmp/.perf.c/s6-supervise; vive en el cgroup de crond.service
+proceso,"nohup folddbus-send <token 150+ caracteres>",Lanzador del segundo componente
+proceso,"dockerd -H fd:// ... (ejecutable /usr/bin/folddbus-send)",Disfraz de dockerd
+proceso,"/usr/bin/dbus-daemon --system ... y containerd-shim-runc-v2 falsos",Procesos duplicados con ejecutable en /tmp
+proceso,trufflehog,Busqueda de secretos desde /usr/bin/.atmp/...
+variable_entorno,XVEIL=poa,Identificador de campania
+variable_entorno,AAPCRK,Token de ejecucion
+variable_entorno,APPROC,Nombre falso del proceso (ej. /usr/bin/dockerd ...)
+variable_entorno,AAZHDE=1,Presente en wrappers de wbin y en el reporte original de perfctl
+variable_entorno,HZAA,Presente en wrappers de df y mount
+id_campania,poa_<IP_VICTIMA>,Contenido de /usr/lib/vei y prefijo de r.log
+comando,"find /var/spool/cron/crontabs -type f | grep cron | grep '/root$' | xargs cat",Bucle de reinyeccion cada 10 s
+comando,"(crontab -l | grep -v -e perfcc -e /tmp/.perf; echo '11 * * * * /root/.config/cron/perfcc') | crontab -",Reinyeccion del cron
+base64_prefijo,"IyEvYmluL3NoCkRLU0tGPSJ1bml4Oi8vL2Jpbi93YmluL3J1bi9kb2NrZXIuc29ja2V0Ig",Descargador: socket /bin/wbin/run/docker.socket y registry.docker.io
+sintoma,vm.nr_hugepages>0 sin configuracion,Hugepages reservadas en caliente por el minero
+sintoma,carga alta con CPU libre en top,Falso top y rootkit ocultando procesos
+sintoma,ldd /usr/bin/ls lista /lib/libgcwrap.so,Deteccion del hook aunque ld.so.preload este oculto
